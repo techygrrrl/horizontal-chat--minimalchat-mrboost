@@ -15,44 +15,7 @@ let emotes = [];
     function logError(error) {
         console.log(error.message);
     }
-   
- res = await fetch(`https://api.7tv.app/v2/users/${channelName}/emotes`, {
-            method: "GET",
-        }).then(returnResponse, logError);
-        if (!res.error || res.status == 200) {
-            if (res.Status === 404) {
-                console.log("Error getting 7tv emotes");
-            } else {
-                for (var i = 0; i < res.length; i++) {
-                    let tvemote = {
-                        name: res[i].name,
-                        urls: res[i].urls[1],
-                    };
-                    emotes.push(tvemote);
-                }
-            }
-        } else {
-            console.log("Error getting 7tv emotes");
-        }
-        // get all 7TV global emotes
-        res = await fetch(`https://api.7tv.app/v2/emotes/global`, {
-            method: "GET",
-        }).then(returnResponse, logError);
-        if (!res.error || res.status == 200) {
-            if (res.Status === 404) {
-                console.log("Error getting 7tv global emotes");
-            } else {
-                for (var i = 0; i < res.length; i++) {
-                    let tvemote = {
-                        name: res[i].name,
-                        urls: res[i].urls[1],
-                    };
-                    emotes.push(tvemote);
-                }
-            }
-        } else {
-            console.log("Error getting 7tv global emotes");
-        }
+  
 } 
 
 window.addEventListener('onEventReceived', function (obj) {
@@ -179,7 +142,8 @@ window.addEventListener('onWidgetLoad', function (obj) {
 
 function attachEmotes(message) {
     let text = html_encode(message.text);
-    let data = [...message.emotes, ...emotes];
+    let data = [...message.emotes, ...emotes].filter(emote => emote.type.includes('twitch'))
+  
     return text
         .replace(
             /([^\s]*)/gi,
